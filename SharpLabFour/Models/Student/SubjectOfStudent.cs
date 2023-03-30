@@ -6,9 +6,11 @@ namespace SharpLabFour.Models.Students
 {
     public class SubjectOfStudent : INotifyPropertyChanged
     {
+        private int itsId;
         private Subject itsSubject;
         private double itsGrade;
 
+        public int Id { get { return itsId; } set { itsId = value; } }
         public Subject Subject { get { return itsSubject; } set { itsSubject = value; } } // subject can't be edited, it can only be added or removed
         public double Grade { get { return itsGrade; } set { itsGrade = value; OnPropertyChanged("Grade"); } }
 

@@ -1,6 +1,6 @@
-﻿using SharpLabFour.DataFramePages;
+﻿using SharpLabFour.Database;
+using SharpLabFour.DataFramePages;
 using SharpLabFour.Directories;
-using SharpLabFour.Memento;
 using SharpLabFour.Strategies.ShowSubjectsPageViewStrategies;
 using SharpLabFour.ViewModels;
 using System;
@@ -22,18 +22,21 @@ namespace SharpLabFour
             DirectoryChecker.CreateDeletedDirectories();
         }
 
+        public DbUniversityContext dbUniversityContext;
         public StudentViewModel studentViewModel;
         public SubjectViewModel subjectViewModel;
         public MainWindow()
         {
             InitializeComponent();
 
-            studentViewModel = new StudentViewModel();
-            subjectViewModel = new SubjectViewModel(studentViewModel);
+            dbUniversityContext = new DbUniversityContext();
+            studentViewModel = new StudentViewModel(dbUniversityContext);
+            subjectViewModel = new SubjectViewModel(studentViewModel, dbUniversityContext);
+            //studentViewModel = new StudentViewModel();
+            //subjectViewModel = new SubjectViewModel(studentViewModel);
         }
         private void MainWindow_Loaded(object sender, EventArgs e)
         {
-            UniversityMementoCreator.LoadSave(this);
         }
 
         private void AddSubject_Click(object sender, RoutedEventArgs e)
@@ -59,7 +62,6 @@ namespace SharpLabFour
 
         private void MainWindow_Closing(object sender, EventArgs e)
         {
-            UniversityMementoCreator.CreateSave(this);
         }
     }
 }

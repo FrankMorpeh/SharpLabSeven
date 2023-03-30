@@ -9,10 +9,12 @@ namespace SharpLabFour.Models.Students
 {
     public class Student : INotifyPropertyChanged
     {
+        private int itsId;
         private string itsFirstName;
         private string itsLastName;
         private ObservableCollection<SubjectOfStudent> itsSubjectsAndGrades;
 
+        public int Id { get { return itsId; } set { itsId = value; } }
         public string FirstName
         {
             get { return itsFirstName; }

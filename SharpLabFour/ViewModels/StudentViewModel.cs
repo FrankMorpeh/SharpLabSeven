@@ -1,4 +1,5 @@
-﻿using SharpLabFour.Memento;
+﻿using Microsoft.EntityFrameworkCore;
+using SharpLabFour.Database;
 using SharpLabFour.Models.Students;
 using SharpLabFour.Models.Subjects;
 using SharpLabFour.States.StudentViewModelSortingStates;
@@ -16,6 +17,8 @@ namespace SharpLabFour.ViewModels
     {
         private ObservableCollection<Student> itsStudents;
         private IStudentViewModelSortingState itsStudentViewModelSortingState;
+        private event Action<Student> itsAddStudentToDatabaseEvent;
+        private event Action<Student> itsRemoveStudentFromDatabaseEvent;
 
         public ObservableCollection<Student> Students { get { return itsStudents; } set { itsStudents = value; } }
         
@@ -24,13 +27,22 @@ namespace SharpLabFour.ViewModels
             itsStudents = new ObservableCollection<Student>();
             itsStudentViewModelSortingState = new StudentViewModelNotSortedByLastNameState();
         }
+        public StudentViewModel(DbUniversityContext dbUniversityContext)
+        {
+            itsStudents = new ObservableCollection<Student>(dbUniversityContext.Students.Include(s => s.SubjectsAndGrades));
+            itsStudentViewModelSortingState = new StudentViewModelNotSortedByLastNameState();
+            itsAddStudentToDatabaseEvent += dbUniversityContext.AddStudent;
+            itsRemoveStudentFromDatabaseEvent += dbUniversityContext.RemoveStudent;
+        }
         public void AddStudent(Student student)
         {
             itsStudents.Add(student);
+            itsAddStudentToDatabaseEvent(student);
         }
         public void RemoveStudent(Student student)
         {
             itsStudents.Remove(student);
+            itsRemoveStudentFromDatabaseEvent(student);
         }
         public void RemoveSubjectFromAllStudents(Subject subject) // is called when a subject is removed in SubjectViewModel
         {
@@ -60,30 +72,6 @@ namespace SharpLabFour.ViewModels
         }
 
 
-        // Memento
-        public StudentViewModelMemento SaveState()
-        {
-            return new StudentViewModelMemento(itsStudents);
-        }
-        public void LoadState(StudentViewModelMemento studentViewModelMemento, SubjectViewModelMemento subjectViewModelMemento)
-        {
-            /*
-                SubjectViewModelMemento is needed so as to bind student's subjects with the same objects in memory,
-                as after serialization subjects of students and actual subjects are different
-            */
-            foreach (Student student in studentViewModelMemento.Students)
-            {
-                itsStudents.Add(new Student(student.FirstName, student.LastName));
-                foreach (Subject subject in subjectViewModelMemento.Subjects)
-                {
-                    if (student.SubjectsAndGrades.ToList().Exists(sg => sg.Subject.Name == subject.Name))
-                    {
-                        itsStudents[itsStudents.Count - 1].SubjectsAndGrades.Add(new SubjectOfStudent(subject
-                            , student.SubjectsAndGrades.Where(sg => sg.Subject.Name == subject.Name).FirstOrDefault().Grade));
-                    }
-                }
-            }
-        }
 
 
         // MVVM events
