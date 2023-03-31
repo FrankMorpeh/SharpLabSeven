@@ -94,16 +94,26 @@ namespace SharpLabFour.Models.Students
             itsSubjectsAndGrades.Add(new SubjectOfStudent(subject));
             itsStudentUpdatedEvent(this);
         }
-        public void AddSubjectRange(List<Subject> subjects)
+        public bool AddSubjectRange(List<Subject> subjects)
         {
+            bool allSubjectsAdded = true;
             foreach (Subject subject in subjects)
             {
-                SubjectOfStudent subjectOfStudent = new SubjectOfStudent(subject);
-                subjectOfStudent.SubjectOfStudentUpdatedEvent += OnUpdateSubjectAndGrades;
-                itsSubjectsAndGrades.Add(subjectOfStudent);
+                if (itsSubjectsAndGrades.Count < 35)
+                {
+                    SubjectOfStudent subjectOfStudent = new SubjectOfStudent(subject);
+                    subjectOfStudent.SubjectOfStudentUpdatedEvent += OnUpdateSubjectAndGrades;
+                    itsSubjectsAndGrades.Add(subjectOfStudent);
+                }
+                else
+                {
+                    allSubjectsAdded = false;
+                    break;
+                }
             }
             if (itsStudentUpdatedEvent != null)
                 itsStudentUpdatedEvent(this);
+            return allSubjectsAdded;
         }
         public void RemoveSubject(SubjectOfStudent subjectOfStudent)
         {

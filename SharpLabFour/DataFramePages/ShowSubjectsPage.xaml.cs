@@ -40,8 +40,10 @@ namespace SharpLabFour.DataFramePages
                 NotificationView.ShowNotification(notificationStackPanel, notificationTextBlock, new RecordNotChosen());
             else
             {
-                itsChosenStudent.AddSubjectRange(subjectsDataGrid.SelectedItems.Cast<Subject>().ToList());
-                itsContent.dataFrame.GoBack();
+                if (itsChosenStudent.AddSubjectRange(subjectsDataGrid.SelectedItems.Cast<Subject>().ToList()) == false)
+                    NotificationView.ShowNotification(notificationStackPanel, notificationTextBlock, new SubjectLimitForStudentExceeded());
+                else
+                    itsContent.dataFrame.GoBack();
             }
         }
 

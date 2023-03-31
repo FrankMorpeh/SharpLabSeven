@@ -31,6 +31,12 @@ namespace SharpLabFour.Notification
 
         public EmptyStudentLastName() { Text = "STUDENT'S LAST NAME IS EMPTY!"; }
     }
+    public class SubjectLimitForStudentExceeded : INotification
+    {
+        public string Text { get; set; }
+
+        public SubjectLimitForStudentExceeded() { Text = "SOME SUBJECTS HAVEN'T BEEN ADDED DUE TO LIMIT (35 MAX)!"; }
+    }
     public class None : INotification
     {
         public string Text { get; set; }
