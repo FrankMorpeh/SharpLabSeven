@@ -19,6 +19,8 @@ namespace SharpLabFour.ViewModels
         private IStudentViewModelSortingState itsStudentViewModelSortingState;
         private event Action<Student> itsAddStudentToDatabaseEvent;
         private event Action<Student> itsRemoveStudentFromDatabaseEvent;
+        private event Action<Student> itsUpdateStudentInDatabaseEvent;
+        private event Action<SubjectOfStudent> itsRemoveSubjectOfStudentEvent;
 
         public ObservableCollection<Student> Students { get { return itsStudents; } set { itsStudents = value; } }
         
@@ -30,12 +32,25 @@ namespace SharpLabFour.ViewModels
         public StudentViewModel(DbUniversityContext dbUniversityContext)
         {
             itsStudents = new ObservableCollection<Student>(dbUniversityContext.Students.Include(s => s.SubjectsAndGrades));
+            SetUpdateEvents();
             itsStudentViewModelSortingState = new StudentViewModelNotSortedByLastNameState();
             itsAddStudentToDatabaseEvent += dbUniversityContext.AddStudent;
             itsRemoveStudentFromDatabaseEvent += dbUniversityContext.RemoveStudent;
+            itsUpdateStudentInDatabaseEvent += dbUniversityContext.UpdateStudent;
+            itsRemoveSubjectOfStudentEvent += dbUniversityContext.RemoveSubjectOfStudent;
+        }
+        private void SetUpdateEvents()
+        {
+            foreach (Student student in itsStudents)
+            {
+                student.StudentUpdatedEvent += OnUpdateStudent;
+                student.SubjectOfStudentRemovedEvent += OnRemoveSubjectOfStudent;
+                student.SetUpdateEvents();
+            }
         }
         public void AddStudent(Student student)
         {
+            student.StudentUpdatedEvent += OnUpdateStudent;
             itsStudents.Add(student);
             itsAddStudentToDatabaseEvent(student);
         }
@@ -43,6 +58,14 @@ namespace SharpLabFour.ViewModels
         {
             itsStudents.Remove(student);
             itsRemoveStudentFromDatabaseEvent(student);
+        }
+        public void OnUpdateStudent(Student student)
+        {
+            itsUpdateStudentInDatabaseEvent(student);
+        }
+        public void OnRemoveSubjectOfStudent(SubjectOfStudent subjectOfStudent)
+        {
+            itsRemoveSubjectOfStudentEvent(subjectOfStudent);
         }
         public void RemoveSubjectFromAllStudents(Subject subject) // is called when a subject is removed in SubjectViewModel
         {

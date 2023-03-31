@@ -1,4 +1,5 @@
 ﻿using SharpLabFour.Models.Subjects;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -9,10 +10,35 @@ namespace SharpLabFour.Models.Students
         private int itsId;
         private Subject itsSubject;
         private double itsGrade;
+        private event Action<SubjectOfStudent> itsSubjectOfStudentUpdatedEvent;
 
         public int Id { get { return itsId; } set { itsId = value; } }
-        public Subject Subject { get { return itsSubject; } set { itsSubject = value; } } // subject can't be edited, it can only be added or removed
-        public double Grade { get { return itsGrade; } set { itsGrade = value; OnPropertyChanged("Grade"); } }
+        public Subject Subject 
+        { 
+            get { return itsSubject; } 
+            set 
+            { 
+                itsSubject = value;
+                if (itsSubjectOfStudentUpdatedEvent != null)
+                    itsSubjectOfStudentUpdatedEvent(this);
+            } 
+        }
+        public double Grade 
+        { 
+            get { return itsGrade; } 
+            set 
+            { 
+                itsGrade = value; 
+                OnPropertyChanged("Grade");
+                if (itsSubjectOfStudentUpdatedEvent != null)
+                    itsSubjectOfStudentUpdatedEvent(this);
+            } 
+        }
+        public event Action<SubjectOfStudent> SubjectOfStudentUpdatedEvent
+        {
+            add { itsSubjectOfStudentUpdatedEvent += value; }
+            remove { itsSubjectOfStudentUpdatedEvent -= value; }
+        }
 
         public SubjectOfStudent()
         {

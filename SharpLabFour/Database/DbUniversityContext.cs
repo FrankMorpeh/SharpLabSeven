@@ -32,6 +32,15 @@ namespace SharpLabFour.Database
             Students.Remove(student);
             SaveChanges();
         }
+        public void UpdateStudent(Student student)
+        {
+            Student studentToUpdate = Students.Find(student.Id);
+            if (studentToUpdate != null)
+            {
+                studentToUpdate = student;
+                SaveChanges();
+            }
+        }
         public void AddSubject(Subject subject)
         {
             Subjects.Add(subject);
@@ -40,6 +49,20 @@ namespace SharpLabFour.Database
         public void RemoveSubject(Subject subject)
         {
             Subjects.Remove(subject);
+            SaveChanges();
+        }
+        public void UpdateSubject(Subject subject)
+        {
+            Subject subjectToUpdate = Subjects.Find(subject.Id);
+            if (subjectToUpdate != null)
+            {
+                subjectToUpdate = subject;
+                SaveChanges();
+            }
+        }
+        public void RemoveSubjectOfStudent(SubjectOfStudent subjectOfStudent)
+        {
+            SubjectsOfStudent.Remove(subjectOfStudent);
             SaveChanges();
         }
     }

@@ -12,11 +12,13 @@ namespace SharpLabFour.ViewModels
         private event Action<Subject> itsSubjectRemovedEvent;
         private event Action<Subject> itsAddSubjectToDatabaseEvent;
         private event Action<Subject> itsRemoveSubjectFromDatabaseEvent;
+        private event Action<Subject> itsUpdateSubjectInDatabaseEvent;
         public ObservableCollection<Subject> Subjects { get; set; }
 
-        public SubjectViewModel(ObservableCollection<Subject> subjects)
+        public SubjectViewModel(ObservableCollection<Subject> subjects, DbUniversityContext dbUniversityContext)
         {
             Subjects = subjects;
+            itsAddSubjectToDatabaseEvent += dbUniversityContext.AddSubject;
         }
         public SubjectViewModel(StudentViewModel studentViewModel)
         {
@@ -25,13 +27,21 @@ namespace SharpLabFour.ViewModels
         }
         public SubjectViewModel(StudentViewModel studentViewModel, DbUniversityContext dbUniversityContext)
         {
-            Subjects = dbUniversityContext.Subjects.Local.ToObservableCollection();
+            Subjects = new ObservableCollection<Subject>(dbUniversityContext.Subjects);
+            SetUpdateEvents();
             itsSubjectRemovedEvent += studentViewModel.RemoveSubjectFromAllStudents;
             itsAddSubjectToDatabaseEvent += dbUniversityContext.AddSubject;
             itsRemoveSubjectFromDatabaseEvent += dbUniversityContext.RemoveSubject;
+            itsUpdateSubjectInDatabaseEvent += dbUniversityContext.UpdateSubject;
+        }
+        private void SetUpdateEvents()
+        {
+            foreach (Subject subject in Subjects)
+                subject.SubjectUpdatedEvent += OnUpdateSubject;
         }
         public void AddSubject(Subject subject)
         {
+            subject.SubjectUpdatedEvent += OnUpdateSubject;
             Subjects.Add(subject);
             itsAddSubjectToDatabaseEvent(subject);
         }
@@ -40,6 +50,10 @@ namespace SharpLabFour.ViewModels
             Subjects.Remove(subject);
             itsSubjectRemovedEvent(subject);
             itsRemoveSubjectFromDatabaseEvent(subject);
+        }
+        public void OnUpdateSubject(Subject subject) // called from an element that has just been updated
+        {
+            itsUpdateSubjectInDatabaseEvent(subject);
         }
 
 

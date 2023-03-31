@@ -19,7 +19,7 @@ namespace SharpLabFour.DataFramePages
         {
             InitializeComponent();
             itsContent = content;
-            itsSubjectsOfStudentViewModel = new SubjectsOfStudentViewModel(chosenStudent.SubjectsAndGrades);
+            itsSubjectsOfStudentViewModel = new SubjectsOfStudentViewModel(chosenStudent);
             DataContext = itsSubjectsOfStudentViewModel;
             itsChosenStudent = chosenStudent;
         }
@@ -29,7 +29,7 @@ namespace SharpLabFour.DataFramePages
         {
             itsContent.dataFrame.Content = new ShowSubjectsPage(itsContent, new AddSubjectsToStudentStrategy()
                 , new SubjectViewModel(itsSubjectsOfStudentViewModel.GetNotUsedSubjectsOfCurrentStudent(
-                    itsContent.subjectViewModel.Subjects)), itsChosenStudent);
+                    itsContent.subjectViewModel.Subjects), itsContent.dbUniversityContext), itsChosenStudent);
         }
         private void Remove_Click(object sender, RoutedEventArgs e)
         {

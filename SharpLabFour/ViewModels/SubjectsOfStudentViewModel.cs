@@ -9,15 +9,16 @@ namespace SharpLabFour.ViewModels
 {
     public class SubjectsOfStudentViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<SubjectOfStudent> Subjects { get; set; }
+        private Student itsStudent;
+        public ObservableCollection<SubjectOfStudent> Subjects { get { return itsStudent.SubjectsAndGrades; } set { itsStudent.SubjectsAndGrades = value; } }
 
-        public SubjectsOfStudentViewModel(ObservableCollection<SubjectOfStudent> subjectsOfStudents)
+        public SubjectsOfStudentViewModel(Student student)
         {
-            Subjects = subjectsOfStudents;
+            itsStudent = student;
         }
         public void RemoveSubject(SubjectOfStudent subjectOfStudent)
         {
-            Subjects.Remove(subjectOfStudent);
+            itsStudent.RemoveSubject(subjectOfStudent);
         }
         public ObservableCollection<Subject> GetNotUsedSubjectsOfCurrentStudent(ObservableCollection<Subject> allSubjects)
         {
