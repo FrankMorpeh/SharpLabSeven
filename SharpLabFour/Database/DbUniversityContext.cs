@@ -24,46 +24,88 @@ namespace SharpLabFour.Database
         // Data
         public void AddStudent(Student student)
         {
-            Students.Add(student);
-            SaveChanges();
+            try
+            {
+                Students.Add(student);
+                SaveChanges();
+            }
+            catch (System.Exception)
+            {
+            }
         }
         public void RemoveStudent(Student student)
         {
-            Students.Remove(student);
-            SaveChanges();
+            try
+            {
+                Students.Remove(student);
+                SaveChanges();
+            }
+            catch (System.Exception)
+            {
+            }
         }
         public void UpdateStudent(Student student)
         {
-            Student studentToUpdate = Students.Find(student.Id);
-            if (studentToUpdate != null)
+            try
             {
-                studentToUpdate = student;
-                SaveChanges();
+                Student studentToUpdate = Students.Find(student.Id);
+                if (studentToUpdate != null)
+                {
+                    studentToUpdate = student;
+                    SaveChanges();
+                }
+            }
+            catch (System.Exception)
+            {
             }
         }
         public void AddSubject(Subject subject)
         {
-            Subjects.Add(subject);
-            SaveChanges();
+            try
+            {
+                Subjects.Add(subject);
+                SaveChanges();
+            }
+            catch (System.Exception)
+            {
+            }
         }
         public void RemoveSubject(Subject subject)
         {
-            Subjects.Remove(subject);
-            SaveChanges();
+            try
+            {
+                Subjects.Remove(subject);
+                SaveChanges();
+            }
+            catch (System.Exception)
+            {
+            }
         }
         public void UpdateSubject(Subject subject)
         {
-            Subject subjectToUpdate = Subjects.Find(subject.Id);
-            if (subjectToUpdate != null)
+            try
             {
-                subjectToUpdate = subject;
-                SaveChanges();
+                Subject subjectToUpdate = Subjects.Find(subject.Id);
+                if (subjectToUpdate != null)
+                {
+                    subjectToUpdate = subject;
+                    SaveChanges();
+                }
+            }
+            catch (System.Exception)
+            {
             }
         }
         public void RemoveSubjectOfStudent(SubjectOfStudent subjectOfStudent)
         {
-            SubjectsOfStudent.Remove(subjectOfStudent);
-            SaveChanges();
+            try
+            {
+                SubjectsOfStudent.Remove(subjectOfStudent);
+                SaveChanges();
+            }
+            catch (System.Exception)
+            {
+            }
         }
     }
 }

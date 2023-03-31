@@ -73,7 +73,17 @@ namespace SharpLabFour.Models.Students
             itsFirstName = firstName;
             itsLastName = lastName;
             itsSubjectsAndGrades = subjectsAndGrades;
+            itsSubjectsAndGrades.CollectionChanged += ItsSubjectsAndGrades_CollectionChanged;
         }
+
+        private void ItsSubjectsAndGrades_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+            {
+                itsSubjectOfStudentRemovedEvent((SubjectOfStudent)e.OldItems[0]);
+            }
+        }
+
         public void SetUpdateEvents()
         {
             foreach (SubjectOfStudent subjectOfStudent in itsSubjectsAndGrades)
@@ -87,8 +97,13 @@ namespace SharpLabFour.Models.Students
         public void AddSubjectRange(List<Subject> subjects)
         {
             foreach (Subject subject in subjects)
-                itsSubjectsAndGrades.Add(new SubjectOfStudent(subject));
-            itsStudentUpdatedEvent(this);
+            {
+                SubjectOfStudent subjectOfStudent = new SubjectOfStudent(subject);
+                subjectOfStudent.SubjectOfStudentUpdatedEvent += OnUpdateSubjectAndGrades;
+                itsSubjectsAndGrades.Add(subjectOfStudent);
+            }
+            if (itsStudentUpdatedEvent != null)
+                itsStudentUpdatedEvent(this);
         }
         public void RemoveSubject(SubjectOfStudent subjectOfStudent)
         {
@@ -99,6 +114,7 @@ namespace SharpLabFour.Models.Students
         public void RemoveSubject(Subject subject) // called from StudentViewModel when an initial subject is deleted
         {
             itsSubjectsAndGrades.Remove(itsSubjectsAndGrades.Where(sg => sg.Subject == subject).FirstOrDefault());
+            itsStudentUpdatedEvent(this);
         }
         public void OnUpdateSubjectAndGrades(SubjectOfStudent subjectOfStudent)
         {
